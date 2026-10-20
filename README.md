@@ -8,7 +8,8 @@
 ![Course](https://img.shields.io/badge/Course-23CSE301%20ML%20Capstone-22d3ee?style=for-the-badge&labelColor=060d1a)
 ![Python](https://img.shields.io/badge/Python-3.x-fbbf24?style=for-the-badge&logo=python&logoColor=white&labelColor=060d1a)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-pipelines-a78bfa?style=for-the-badge&logo=scikitlearn&logoColor=white&labelColor=060d1a)
-![Jupyter](https://img.shields.io/badge/Jupyter-4%20notebooks-fb7185?style=for-the-badge&logo=jupyter&logoColor=white&labelColor=060d1a)
+![Jupyter](https://img.shields.io/badge/Jupyter-4%20notebooks-fb7185?style=for-the-badge&logo=jupyter&logoColor=white&labelColor=060d1a)
+[![Streamlit App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white&labelColor=060d1a)](https://integrated-ml-capstone-cksmcztxcjd42mjysqywzv.streamlit.app)
 
 ### 🐍 **Team Cobra Tech** — three tracks, three real-world datasets, one question:
 ### *can machine learning make roads smarter and safer?*
