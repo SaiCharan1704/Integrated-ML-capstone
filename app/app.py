@@ -154,7 +154,7 @@ with tab_reg:
             # Weather details
             c3, c4 = st.columns(2)
             with c3:
-                temp_c = st.slider("Temperature (°C)", min_value=-35.0, max_value=45.0, value=20.0, step=0.5)
+                temp_c = st.slider("Temperature (°C)", min_value=-30.0, max_value=38.0, value=20.0, step=0.5, help="Recorded historical range in Minneapolis I-94: -29.8°C to +36.9°C")
                 temp_k = temp_c + 273.15
             with c4:
                 clouds = st.slider("Cloud Cover (%)", min_value=0, max_value=100, value=40, step=5)
@@ -250,6 +250,8 @@ with tab_reg:
             
             st.markdown("##### 💡 Model Insight:")
             st.caption("Feature importance analysis confirmed that **hour and traffic period account for ~84% of variance**. Weekdays exhibit a classic bimodal peak (07:00 and 16:00), while weekends exhibit a single midday plateau.")
+            if temp_c <= -15.0:
+                st.info("❄️ **Real-World Minnesota Insight:** The dataset comes from Minneapolis I-94. Even during extreme sub-zero weather (-20°C to -29°C), historical records show over 850 hours of active traffic (averaging 2,479 vehicles/hr and up to 6,900 at 4 PM rush hour). People still commute to work in heated cars and snow-plowed freeways!")
 
 # =============================================================================
 # TAB 2: CLASSIFICATION TRACK
