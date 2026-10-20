@@ -383,38 +383,49 @@ with tab_cluster:
         k_scaler = cluster_bundle["scaler"]
         k_meta = cluster_bundle["metadata"]
         
-        col_map_in, col_map_out = st.columns([1, 1], gap="large")
+        col_map_in, col_map_out = st.columns([1, 1.1], gap="large")
         
         with col_map_in:
             st.markdown("#### 📍 Coordinate Explorer")
             
-            preset = st.selectbox(
-                "Choose a Representative Landmark or Enter Custom Coordinates:",
-                [
-                    "Haidian District (Tech Hub & University Belt)",
-                    "Central Beijing Urban Core (Commercial / Government)",
-                    "Beijing Capital International Airport (PEK)",
-                    "South Beijing Transit Hub (Daxing Corridor)",
-                    "Olympic Green & Chaoyang Residential Belt",
-                    "Custom Coordinates..."
-                ]
-            )
-            
             preset_coords = {
-                "Haidian District (Tech Hub & University Belt)": (39.982, 116.312),
-                "Central Beijing Urban Core (Commercial / Government)": (39.904, 116.407),
-                "Beijing Capital International Airport (PEK)": (40.079, 116.603),
-                "South Beijing Transit Hub (Daxing Corridor)": (39.752, 116.351),
-                "Olympic Green & Chaoyang Residential Belt": (40.015, 116.388)
+                "Haidian District (Tech Hub & University Belt)": (39.9820, 116.3120),
+                "Central Beijing Urban Core (Commercial / Government)": (39.9040, 116.4070),
+                "Beijing Capital International Airport (PEK)": (40.0790, 116.6030),
+                "South Beijing Transit Hub (Daxing Corridor)": (39.7520, 116.3510),
+                "Olympic Green & Chaoyang Residential Belt": (40.0150, 116.3880)
             }
             
-            if preset != "Custom Coordinates...":
+            preset = st.selectbox(
+                "Choose a Representative Landmark or Custom Location:",
+                list(preset_coords.keys()) + ["Custom Coordinates..."],
+                index=0
+            )
+            
+            if preset in preset_coords:
                 def_lat, def_lon = preset_coords[preset]
             else:
-                def_lat, def_lon = 39.95, 116.35
+                def_lat, def_lon = 39.9500, 116.3500
             
-            input_lat = st.number_input("Latitude (°N)", min_value=25.0, max_value=45.0, value=float(def_lat), format="%.4f")
-            input_lon = st.number_input("Longitude (°E)", min_value=100.0, max_value=125.0, value=float(def_lon), format="%.4f")
+            clat_col, clon_col = st.columns(2)
+            with clat_col:
+                input_lat = st.number_input(
+                    "Latitude (°N)",
+                    min_value=25.0,
+                    max_value=45.0,
+                    value=float(def_lat),
+                    key=f"lat_input_{preset}",
+                    format="%.4f"
+                )
+            with clon_col:
+                input_lon = st.number_input(
+                    "Longitude (°E)",
+                    min_value=100.0,
+                    max_value=125.0,
+                    value=float(def_lon),
+                    key=f"lon_input_{preset}",
+                    format="%.4f"
+                )
             
             # Predict cluster
             scaled_coords = k_scaler.transform([[input_lat, input_lon]])
@@ -431,22 +442,53 @@ with tab_cluster:
             
             st.markdown("##### 📐 Internal Clustering Metrics:")
             col_m1, col_m2, col_m3 = st.columns(3)
-            col_m1.metric("Silhouette", "0.848", "Excellent separation")
+            col_m1.metric("Silhouette", "0.848", "High separation")
             col_m2.metric("Davies-Bouldin", "0.266", "Lower is better")
             col_m3.metric("Calinski-Harabasz", "260,563", "High density")
             
         with col_map_out:
             st.markdown("#### 🗺️ Spatial Hub Map View")
             
-            # Build sample map visualization
+            # 1. Background trajectory density points (Cyan)
             sample_pts = np.array(k_meta["sample_points"])
-            sample_df = pd.DataFrame(sample_pts, columns=["lat", "lon"])
+            bg_df = pd.DataFrame(sample_pts, columns=["lat", "lon"])
+            bg_df["color"] = "#22d3ee"
+            bg_df["size"] = 18
             
-            # Add user point
-            user_point = pd.DataFrame([{"lat": input_lat, "lon": input_lon}])
+            # 2. Cluster Centroids (Gold / Amber)
+            centers = np.array(k_meta["centers_original"])
+            centers_df = pd.DataFrame(centers, columns=["lat", "lon"])
+            centers_df["color"] = "#fbbf24"
+            centers_df["size"] = 65
             
-            st.map(sample_df, zoom=9)
-            st.caption("Displaying GPS point density across the Beijing metropolitan trajectory sample.")
+            # 3. User Selected Active Location (Bright Neon Red - Prominent Large Marker)
+            user_df = pd.DataFrame([{
+                "lat": float(input_lat),
+                "lon": float(input_lon),
+                "color": "#ff0055",
+                "size": 220
+            }])
+            
+            # Combined map dataframe
+            map_combined = pd.concat([bg_df, centers_df, user_df], ignore_index=True)
+            
+            st.map(
+                map_combined,
+                latitude="lat",
+                longitude="lon",
+                color="color",
+                size="size",
+                zoom=9
+            )
+            
+            st.markdown("""
+            <div style="font-size:0.88rem; color:#94a3b8; margin-top:-5px; margin-bottom:15px;">
+                <b>Map Markers:</b> &nbsp; 
+                <span style="color:#ff0055; font-size:1.1rem;">●</span> <b>Your Selected Location (Active)</b> &nbsp;|&nbsp; 
+                <span style="color:#fbbf24; font-size:1.1rem;">●</span> <b>5 Cluster Centroids</b> &nbsp;|&nbsp; 
+                <span style="color:#22d3ee; font-size:1.1rem;">●</span> <b>GeoLife GPS Sample</b>
+            </div>
+            """, unsafe_allow_html=True)
             
             st.markdown("##### 🥊 K-Means vs Agglomerative Duel:")
             duel_df = pd.DataFrame({
