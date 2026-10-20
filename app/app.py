@@ -124,7 +124,7 @@ tab_reg, tab_clf, tab_cluster, tab_score, tab_about = st.tabs([
     "🚨 Track 2 · Accident Severity (Classification)",
     "🗺️ Track 3 · GPS Trajectory (Clustering)",
     "🏆 Model Leaderboard & Metrics",
-    "📖 Capstone Methodology & Viva"
+    "ℹ️ Project Architecture & Team"
 ])
 
 # =============================================================================
@@ -508,7 +508,7 @@ with tab_score:
 # TAB 5: ABOUT & VIVA PREPARATION
 # =============================================================================
 with tab_about:
-    st.markdown("### 📖 Capstone Narrative & Defense (Viva Guide)")
+    st.markdown("### ℹ️ Project Architecture & Engineering Methodology")
     
     st.markdown("""
     #### 🎯 Core Problem Statement
@@ -527,7 +527,7 @@ with tab_about:
     """)
     
     st.markdown("---")
-    st.markdown("### 👥 Team Ownership & Viva Roles")
+    st.markdown("### 👥 Engineering Team & Track Ownership")
     c_m1, c_m2, c_m3 = st.columns(3)
     with c_m1:
         st.info("""
